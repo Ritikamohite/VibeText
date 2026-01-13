@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/profile.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="profile-page">
+  <h3>Posts</h3>
+
+  {% for post in posts %}
+  <div class="post-card">
+    <div class="post-content">
+      <p>{{ post.content }}</p>
+    </div>
+    <div class="post-footer">
+      <small>{{ post.created_at|date:"M d, Y • h:i a" }}</small>
+    </div>
+  </div>
+  {% empty %}
+  <p class="empty-text">No posts yet.</p>
+  {% endfor %}
+
+  <a href="{% url 'profile' request.user.username %}" class="back-profile-btn">
+    👤 Back to Profile
+  </a>
+
+</div>
+{% endblock %}

@@ -1,0 +1,229 @@
+{% extends 'base.html' %}
+
+{% block title %}
+{{ community.name }} | MicroBlogHub
+{% endblock %}
+
+{% block content %}
+<!-- BACK TO COMMUNITIES -->
+<div style="
+    position: sticky;
+    top: 70px;               /* stays below navbar */
+    margin-bottom: 1rem;
+    z-index: 10;
+">
+  <a href="{% url 'community_list' %}"
+     style="
+        display:inline-flex;
+        align-items:center;
+        gap:0.4rem;
+        font-size:0.95rem;
+        font-weight:600;
+        color:#a78bfa;
+        text-decoration:none;
+     ">
+    ← Back to Communities
+  </a>
+</div>
+
+
+<section class="container full-width community-detail">
+
+  <!-- ================= HEADER ================= -->
+  <div class="community-header"
+       style="display:flex; justify-content:space-between; align-items:center; gap:1rem;">
+
+    <!-- LEFT -->
+    <div>
+      <h1 style="margin:0;">{{ community.name }}</h1>
+      <p class="communuty-desc">{{ community.description }}</p>
+    </div>
+
+    <!-- RIGHT -->
+    <div class="community-actions"
+         style="display:flex; gap:0.5rem; align-items:center;">
+
+      {% if is_member %}
+        <span class="joined-badge">Joined</span>
+      {% endif %}
+
+      {% if is_member and not is_creator %}
+        <form method="POST"
+              action="{% url 'leave_community' community.id %}"
+              onsubmit="return confirm('Leave this community?');"
+              style="margin:0;">
+          {% csrf_token %}
+          <button type="submit" class="leave-btn">Leave</button>
+        </form>
+      {% endif %}
+
+    </div>
+  </div>
+
+  {% if request.user == community.created_by %}
+    <div style="margin-top:0.5rem;">
+      <a href="{% url 'delete_community' community.id %}"
+         class="icon-btn"
+         title="Delete community">
+        🗑️ Delete community
+      </a>
+    </div>
+  {% endif %}
+
+  <!-- ================= POST COMPOSER ================= -->
+  <section class="community-composer composer-card">
+
+    {% if request.user.is_authenticated and can_post %}
+      <div class="avatar">{{ request.user.username|first|upper }}</div>
+
+      <form method="POST" class="composer-main">
+        {% csrf_token %}
+        <textarea name="content"
+                  rows="3"
+                  maxlength="1000"
+                  placeholder="Post to {{ community.name }}"
+                  required></textarea>
+
+        <input type="hidden" name="action" value="post">
+
+        <div class="composer-footer">
+          <button type="submit" class="primary-btn">Post</button>
+        </div>
+      </form>
+
+    {% elif request.user.is_authenticated %}
+      <div class="join-lock">
+        <p>You must join this community to post.</p>
+        <a href="{% url 'join_community' community.id %}" class="join-btn">
+          Join Community
+        </a>
+      </div>
+
+    {% else %}
+      <p><a href="{% url 'login' %}">Log in</a> to post.</p>
+    {% endif %}
+
+  </section>
+
+  <!-- ================= POSTS ================= -->
+
+
+  <section class="community-posts">
+    {% for post in posts %}
+
+
+    
+    <article class="post">
+      <div class="avatar">{{ post.user.username|first|upper }}</div>
+    
+      <div class="post-main">
+        <strong>{{ post.user.username }}</strong>
+        <span class="post-time">{{ post.created_at|timesince }} ago</span>
+    
+        <div class="post-body">{{ post.content }}</div>
+    
+        <!-- ACTION BUTTONS -->
+
+        <!-- ACTION BUTTONS -->
+<div class="post-actions"
+style="display:flex; gap:0.75rem; margin-top:0.5rem;">
+
+<!-- LIKE -->
+<form method="POST" action="{% url 'toggle_community_like' post.id %}">
+{% csrf_token %}
+<button type="submit" class="like-btn">
+ 👍 Like ({{ post.likes.count }})
+</button>
+</form>
+
+<!-- COMMENT TOGGLE -->
+<button type="button"
+        class="comment-toggle-btn"
+        onclick="toggleComments({{ post.id }})">
+  💬 Comments ({{ post.comments.count }})
+</button>
+
+
+</div>
+
+<!-- COMMENTS BOX -->
+<div id="comments-box-{{ post.id }}"
+class="comments-section"
+
+style="display:none; margin-top:0.75rem;">
+
+{% for c in post.comments.all %}
+<div class="comment-item">
+ <strong>{{ c.user.username }}</strong>
+ · {{ c.created_at|timesince }} ago
+ <div>{{ c.text }}</div>
+</div>
+{% empty %}
+<p class="muted-text">No comments yet.</p>
+{% endfor %}
+
+{% if request.user.is_authenticated and can_post %}
+<form method="POST"
+      action="{% url 'community_detail' community.id %}">
+  {% csrf_token %}
+
+  <input type="hidden" name="action" value="comment">
+  <input type="hidden" name="post_id" value="{{ post.id }}">
+
+  <div style="display:flex; gap:0.5rem; margin-top:0.5rem;">
+    <input type="text"
+           name="comment"
+           placeholder="Write a comment..."
+           required>
+    <button type="submit">Reply</button>
+  </div>
+</form>
+{% endif %}
+
+</div>
+          
+      </div>
+    </article>
+    
+    {% empty %}
+    <p>No posts yet in this community.</p>
+    {% endfor %}
+    </section>
+
+    <script>
+      function toggleComments(postId) {
+        const el = document.getElementById("comments-box-" + postId);
+        if (!el) {
+          console.error("Comment box not found for post", postId);
+          return;
+        }
+        el.style.display = el.style.display === "block" ? "none" : "block";
+      }
+    </script>
+    
+      
+
+
+<script>
+  console.log("COMMENT JS LOADED");
+</script>
+
+      
+<script>
+  window.addEventListener("DOMContentLoaded", () => {
+    if (window.location.hash.startsWith("#comments-")) {
+      const el = document.querySelector(window.location.hash);
+      if (el) {
+        el.style.display = "block";
+      }
+    }
+  });
+</script>
+     
+
+
+
+  
+
+
+{% endblock %}

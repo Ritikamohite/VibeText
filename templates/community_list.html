@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Communities | MicroBlogHub{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/community.css' %}">
+
+
+<section class="container full-width community-listing">
+
+   <!-- BACK TO HOME -->
+   <div style="margin-bottom: 1rem;">
+    <a href="{% url 'home' %}">← Back to Home</a>
+  </div>
+  <h1>Communities</h1>
+  <p>Explore communities and join the conversation.</p>
+     
+
+  {% if request.user.is_authenticated %}
+    <p>
+      <a class="primary-btn" href="{% url 'create_community' %}">
+        Create community
+      </a>
+    </p>
+  {% else %}
+    <p>
+      <a href="{% url 'login' %}">Log in</a> to create a community.
+    </p>
+  {% endif %}
+
+  <div class="community-grid">
+
+    {% for c in communities %}
+    <div class="community-card">
+  
+      <!-- Header -->
+      <div class="community-card-header">
+        <a href="{% url 'community_detail' c.id %}" class="community-title">
+          {{ c.name }}
+        </a>
+  
+        {% if request.user in c.members.all %}
+          <span class="joined-badge">Joined</span>
+        {% endif %}
+      </div>
+  
+      <!-- Description -->
+      <p class="community-desc">
+        {{ c.description|default:"No description"|truncatechars:120 }}
+      </p>
+  
+      <!-- Footer -->
+      <div class="community-card-footer">
+        <span class="creator">
+          Created by:
+          {% if c.created_by %}
+            {{ c.created_by.username }}
+          {% else %}
+            system
+          {% endif %}
+        </span>
+  
+        <a href="{% url 'community_detail' c.id %}" class="open-btn">
+          Open →
+        </a>
+      </div>
+  
+      {% if request.user.is_authenticated and request.user == c.created_by %}
+        <form method="POST"
+              action="{% url 'delete_community' c.id %}"
+              onsubmit="return confirm('Delete this community?');"
+              class="delete-community-form">
+          {% csrf_token %}
+          <button type="submit" class="icon-btn">🗑️</button>
+        </form>
+      {% endif %}
+  
+    </div>
+    {% empty %}
+      <p>No communities yet.</p>
+    {% endfor %}
+  
+  </div>
+  
+</section>
+
+
+{% endblock %}
