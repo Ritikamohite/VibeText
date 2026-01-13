@@ -245,7 +245,7 @@
 
                     <button id="notificationBell" class="notification-bell" type="button">
                         🔔
-                        {% if unread_notifications_count > 0 %}
+                        {% if unread_notifications_count|default:0 > 0 %}
                             <span class="notification-count">{{ unread_notifications_count }}</span>
                         {% endif %}
                     </button>

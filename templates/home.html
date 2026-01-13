@@ -97,13 +97,20 @@
                       <span class="action-count">{{ post.like_count }}</span>
                     </span>
                   {% else %}
-                    {% if post.id in liked_posts %}
-                      <a href="{% url 'unlike' post.id %}" class="action-btn liked">
-                        <span class="action-icon">❤️</span>
-                        <span class="action-count">{{ post.like_count }}</span>
-                      </a>
+                    {% if request.user.is_authenticated %}
+                      {% if post.id in liked_posts %}
+                        <a href="{% url 'unlike' post.id %}" class="action-btn liked">
+                          <span class="action-icon">❤️</span>
+                          <span class="action-count">{{ post.like_count }}</span>
+                        </a>
+                      {% else %}
+                        <a href="{% url 'like' post.id %}" class="action-btn">
+                          <span class="action-icon">🤍</span>
+                          <span class="action-count">{{ post.like_count }}</span>
+                        </a>
+                      {% endif %}
                     {% else %}
-                      <a href="{% url 'like' post.id %}" class="action-btn">
+                      <a href="{% url 'login' %}?next={{ request.path }}" class="action-btn" title="Log in to like">
                         <span class="action-icon">🤍</span>
                         <span class="action-count">{{ post.like_count }}</span>
                       </a>
@@ -145,13 +152,15 @@
                <div class="yt-actions">
                 <button onclick="toggleReply('{{ comment.id }}')">Reply</button>
 
-                <a href="{% url 'toggle_comment_like' comment.id %}" class="comment-like-btn">
-                  {% if comment.id in liked_comments %}
-                      ❤️ {{ comment.likes.count }}
-                    {% else %}
-                    🤍 {{ comment.likes.count }}
-                    {% endif %}
-                </a>
+                {% if request.user.is_authenticated %}
+                  <a href="{% url 'toggle_comment_like' comment.id %}" class="comment-like-btn">
+                    {% if comment.id in liked_comments %} ❤️ {% else %} 🤍 {% endif %} {{ comment.likes.count }}
+                  </a>
+                {% else %}
+                  <a href="{% url 'login' %}?next={{ request.path }}" class="comment-like-btn" title="Log in to like">
+                    {% if comment.id in liked_comments %} ❤️ {% else %} 🤍 {% endif %} {{ comment.likes.count }}
+                  </a>
+                {% endif %}
 
                   {% if user == comment.user %}
                     <button onclick="toggleEdit('{{ comment.id }}')">Edit</button>
@@ -220,11 +229,17 @@
         {% endfor %}
         
         <!-- New Comment -->
+        {% if request.user.is_authenticated %}
         <form method="POST" action="{% url 'add_comment' post.id %}" class="yt-new-comment">
           {% csrf_token %}
           <input type="text" name="comment" placeholder="Add a comment…" required>
           <button type="submit">Send</button>
         </form>
+        {% else %}
+        <div class="yt-new-comment guest">
+          <a href="{% url 'login' %}?next={{ request.path }}">Log in</a> to comment.
+        </div>
+        {% endif %}
         
         </section>
         
