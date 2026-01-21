@@ -99,8 +99,10 @@
                   {% else %}
                     {% if post.id in liked_posts %}
                       <a href="{% url 'unlike' post.id %}" class="action-btn liked">
-                        <span class="action-icon">❤️</span>
+                       
+                        <span class="like-btn" data-id="{{ post.id }}" class="action-icon">❤️</span>
                         <span class="action-count">{{ post.like_count }}</span>
+                       
                       </a>
                     {% else %}
                       <a href="{% url 'like' post.id %}" class="action-btn">

@@ -3,6 +3,95 @@
 
 {% block extra_head %}
 <link rel="stylesheet" href="{% static 'css/profile.css' %}">
+<style>
+    .profile-page {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 2rem 1rem;
+    }
+
+    .profile-page h3 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--text);
+        margin-bottom: 2rem;
+        text-align: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.75rem;
+    }
+
+    .profile-page h3:before {
+        content: "📝";
+        font-size: 2.5rem;
+    }
+
+    .post-card {
+        background: var(--bg-elevated);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 1.5rem;
+        margin-bottom: 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .post-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+        border-color: var(--accent);
+    }
+
+    .post-content p {
+        color: var(--text);
+        font-size: 1rem;
+        line-height: 1.6;
+        margin-bottom: 1rem;
+    }
+
+    .post-footer small {
+        color: var(--text-soft);
+        font-size: 0.9rem;
+    }
+
+    .empty-text {
+        text-align: center;
+        padding: 4rem 2rem;
+        background: var(--bg-elevated);
+        border: 2px dashed var(--border);
+        border-radius: 24px;
+        color: var(--text-soft);
+        font-size: 1.1rem;
+    }
+
+    .back-profile-btn {
+        display: inline-block;
+        margin-top: 2rem;
+        padding: 0.75rem 1.5rem;
+        background: var(--accent);
+        color: white;
+        text-decoration: none;
+        border-radius: 12px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .back-profile-btn:hover {
+        background: var(--accent-hover);
+        transform: translateY(-2px);
+        box-shadow:  0 8px 24px rgba(0, 0, 0, 0.3);
+    }
+
+    @media (max-width: 600px) {
+        .profile-page h3 {
+            font-size: 2rem;
+        }
+
+        .post-card {
+            padding: 1rem;
+        }
+    }
+</style>
 {% endblock %}
 
 {% block content %}

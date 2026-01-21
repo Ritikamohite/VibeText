@@ -2,9 +2,148 @@
 {% load static %}
 
 {% block extra_head %}
-<!-- Optional: add CSS in head -->
- 
 <link rel="stylesheet" href="{% static 'css/profile.css' %}">
+<style>
+    .profile-page {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 2rem 1rem;
+    }
+
+    .profile-page h2 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--text);
+        margin-bottom: 2rem;
+        text-align: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.75rem;
+    }
+
+    .profile-page h2:before {
+        content: "👥";
+        font-size: 2.5rem;
+    }
+
+    .profile-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .profile-list li {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1.25rem;
+        background: var(--bg-elevated);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        margin-bottom: 0.75rem;
+        transition: all 0.3s ease;
+    }
+
+    .profile-list li:hover {
+        transform: translateY(-2px);
+        box-shadow:  0 8px 24px rgba(0, 0, 0, 0.3);
+        border-color: var(--accent);
+    }
+
+    .profile-list img {
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        object-fit: cover;
+        flex-shrink: 0;
+    }
+
+    .profile-info {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .profile-info strong {
+        display: block;
+        font-weight: 600;
+        color: var(--text);
+        font-size: 1.1rem;
+        margin-bottom: 0.25rem;
+    }
+
+    .profile-info p {
+        color: var(--text-soft);
+        font-size: 0.95rem;
+        line-height: 1.5;
+        margin: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        line-clamp: 2;
+        -webkit-box-orient: vertical;
+    }
+
+    .profile-list a:last-child {
+        padding: 0.5rem 1rem;
+        background: var(--accent);
+        color: white;
+        text-decoration: none;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        flex-shrink: 0;
+    }
+
+    .profile-list a:last-child:hover {
+        background: var(--accent-hover);
+        transform: translateY(-1px);
+    }
+
+    .profile-page > p {
+        text-align: center;
+        padding: 4rem 2rem;
+        background: var(--bg-elevated);
+        border: 2px dashed var(--border);
+        border-radius: 24px;
+        color: var(--text-soft);
+        font-size: 1.1rem;
+    }
+
+    .back-home-btn {
+        display: inline-block;
+        margin-top: 2rem;
+        padding: 0.75rem 1.5rem;
+        background: var(--accent);
+        color: white;
+        text-decoration: none;
+        border-radius: 12px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .back-home-btn:hover {
+        background: var(--accent-hover);
+        transform: translateY(-2px);
+        box-shadow:  0 8px 24px rgba(0, 0, 0, 0.3);
+    }
+
+    @media (max-width: 600px) {
+        .profile-page h2 {
+            font-size: 2rem;
+        }
+
+        .profile-list li {
+            padding: 1rem;
+        }
+
+        .profile-list img {
+            width: 48px;
+            height: 48px;
+        }
+    }
+</style>
 {% endblock %}
 
 {% block content %}

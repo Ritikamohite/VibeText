@@ -43,10 +43,14 @@ INSTALLED_APPS = [
     
 
         'core.apps.CoreConfig',
+        'rest_framework',
+        'corsheaders',
 
 ]
 
 MIDDLEWARE = [
+      'corsheaders.middleware.CorsMiddleware',
+    
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -141,8 +145,13 @@ STATIC_URL = '/static/'
 # Optional if using collectstatic
 STATICFILES_DIRS = [BASE_DIR / "static"]
 # Media files
+
+from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 
-
+CORS_ALLOW_ALL_ORIGINS = True

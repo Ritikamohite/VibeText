@@ -27,22 +27,36 @@
     <div class="messages-container-scroll" id="messagesContainer">
         {% if messages %}
             <div class="messages-list">
-                {% for message in messages %}
-                    <div class="message-item {% if message.sender == request.user %}message-sent{% else %}message-received{% endif %}">
-                        {% if message.sender != request.user %}
-                            <div class="message-avatar">
-                                {{ message.sender.username|first|upper }}
-                            </div>
-                        {% endif %}
-                        <div class="message-bubble">
-                            {% if message.sender != request.user %}
-                                <div class="message-sender-name">{{ message.sender.username }}</div>
-                            {% endif %}
-                            <div class="message-text">{{ message.content }}</div>
-                            <div class="message-time">{{ message.created_at|timesince }} ago</div>
-                        </div>
-                    </div>
-                {% endfor %}
+              {% for message in messages %}
+    {% if message.sender == request.user %}
+        <!-- SENT MESSAGE -->
+        <div class="message sent">
+            <div class="message-content">
+                {{ message.content }}
+            </div>
+
+            <div class="message-meta">
+                <span class="time">{{ message.timestamp|timesince }} ago</span>
+
+                {% if message.seen %}
+                    <span class="seen-tick">✔✔</span>
+                {% else %}
+                    <span class="unseen-dot"></span>
+                {% endif %}
+            </div>
+        </div>
+    {% else %}
+        <!-- RECEIVED MESSAGE -->
+        <div class="message received">
+            <div class="message-content">
+                {{ message.content }}
+            </div>
+            <div class="message-meta">
+                <span class="time">{{ message.timestamp|timesince }} ago</span>
+            </div>
+        </div>
+    {% endif %}
+{% endfor %}
             </div>
         {% else %}
             <div class="no-messages-yet">
@@ -94,7 +108,30 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
+
 <style>
+
+    .message-meta {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    opacity: 0.8;
+   }
+
+   .unseen-dot {
+    width: 8px;
+    height: 8px;
+    background-color: #1d9bf0;
+    border-radius: 50%;
+    display: inline-block;
+   }
+
+    .seen-tick {
+       color: #1d9bf0;
+        font-size: 14px;
+    }
+
     .conversation-page-container {
         max-width: 900px;
         margin: 0 auto;

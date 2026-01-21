@@ -139,3 +139,28 @@
 })();
 </script>
 
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  document.querySelectorAll(".ajax-follow").forEach(form => {
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      fetch(this.action, {
+        method: "POST",
+        headers: {
+          "X-CSRFToken": this.querySelector("[name=csrfmiddlewaretoken]").value,
+          "X-Requested-With": "XMLHttpRequest"
+        }
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.status === "followed") {
+          this.querySelector("button").innerText = "Unfollow";
+        } else {
+          this.querySelector("button").innerText = "Follow";
+        }
+      });
+    });
+  });
+});
+</script>

@@ -69,7 +69,6 @@ class CommentLike(models.Model):
     def __str__(self):
         return f"{self.user.username} liked comment {self.comment.id}"
 
-
 class Message(models.Model):
     sender = models.ForeignKey(AUTH_USER, related_name='sent_messages', on_delete=models.CASCADE)
     recipient = models.ForeignKey(AUTH_USER, related_name='received_messages', on_delete=models.CASCADE)
@@ -80,7 +79,7 @@ class Message(models.Model):
     class Meta:
         ordering = ['-created_at']
 
-    def __str__(self):
+    def _str_(self):
         return f"From {self.sender.username} to {self.recipient.username}"
 
 

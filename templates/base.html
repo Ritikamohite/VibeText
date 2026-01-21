@@ -3,6 +3,8 @@
 <html lang="en">
 <head>
 
+<meta name="theme-color" content="#0d6efd">
+
     <!-- Font Awesome Icons -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
@@ -16,6 +18,13 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="{% static 'js/vibetext.js' %}" defer></script>
     <script src="{% static 'js/notifications.js' %}"></script>
+ 
+    <link rel="manifest" href="/static/manifest.json">
+
+
+    {% load static %}
+
+
     <script>
         // Apply saved theme early to avoid flash by setting class on <html>
         (function(){
@@ -335,7 +344,9 @@
         <h3>Important Links</h3>
         <ul>
           <li><a href="{% url 'home' %}">Home</a></li>
-          <li><a href="{% url 'profile' request.user.username %}">Profile</a></li>
+          {% if user.is_authenticated %}
+          <a href="{% url 'profile' user.username %}">Profile</a>
+          {% endif %}
           <li><a href="#">Communities</a></li>
           <li><a href="#">About</a></li>
         </ul>
@@ -380,6 +391,7 @@
         });
         </script>
 
+  
 
 
 
