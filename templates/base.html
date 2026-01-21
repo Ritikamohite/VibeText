@@ -16,6 +16,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="{% static 'js/vibetext.js' %}" defer></script>
     <script src="{% static 'js/notifications.js' %}"></script>
+    <script src="{% static 'js/theme.js' %}" defer></script>
+
     <script src="{% static 'js/bookmark_toggle.js' %}" defer></script>
     <script>
         // Apply saved theme early to avoid flash by setting class on <html>
@@ -214,12 +216,11 @@
             }
         }
 
-        
-   
-
-    
-        
-
+    .main-content-wrapper {
+    position: relative;
+    z-index: 1;
+    overflow: visible !important;
+}
 
     </style>
     {% block extra_head %}{% endblock %}
@@ -228,17 +229,62 @@
     <!-- Ensure CSRF cookie is available for JS/ajax and pages without inline form tokens -->
     <div style="display:none;">{% csrf_token %}</div>
 
-    <!-- TOP NAV -->
-
     <nav class="top-nav">
         <div class="nav-container">
-            <a href="{% url 'home' %}" class="nav-brand">MicroBlogHub</a>
-
-            <div class="nav-links">
-                <a href="{% url 'home' %}" class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}">Home</a>
+      
+          <!-- BRAND -->
+          <a href="{% url 'home' %}" class="nav-brand">MicroBlogHub</a>
+          <div class="nav-center">
+            <form method="GET" action="{% url 'search' %}" class="nav-search-form">
+              <input name="q" type="search" class="nav-search-input"
+                placeholder="Search @users, #tags, keywords"
+                value="{{ request.GET.q|default_if_none:'' }}">
+              <button type="submit" class="nav-search-btn">🔍</button>
+            </form>
+          </div>
+          <!-- RIGHT SIDE -->
+          <div class="nav-links">
+      
+            <!-- THREE DOT MENU -->
+            <div class="menu-wrapper">
+              <button id="menuBtn" class="menu-btn" aria-label="Menu">⋮</button>
+      
+              <div id="menuDropdown" class="menu-dropdown">
+      
+                <a href="{% url 'home' %}">🏠 Home</a>
+      
                 {% if user.is_authenticated %}
-                    <a href="{% url 'profile' request.user.username %}" class="nav-link {% if request.resolver_match.url_name == 'profile' %}active{% endif %}">Profile</a>
+                  <a href="{% url 'profile' request.user.username %}">👤 Profile</a>
+                  <a href="{% url 'messages' %}">💬 Messages</a>
                 {% endif %}
+      
+                <!-- Notifications -->
+                <button id="notificationBell" class="menu-item">
+                    🔔 Notifications
+                    {% if unread_notifications_count > 0 %}
+                      <span class="menu-badge notification-count">
+                        {{ unread_notifications_count }}
+                      </span>
+                    {% endif %}
+                  </button>
+                  
+                  <div id="notificationPopup" class="notification-popup"></div>
+                  
+      
+                <!-- Theme toggle (ONLY ONE) -->
+                <button id="themeToggle" class="menu-item">
+                    <span>🌓 Toggle theme</span>
+                    <svg id="themeIcon"
+                         viewBox="0 0 24 24"
+                         width="18"
+                         height="18"
+                         style="margin-left:auto">
+                    </svg>
+                  </button>
+                  
+                  
+                <hr>
+      
                 <a href="{% url 'messages' %}" class="nav-link">
                 💬 Messages
                 </a>
@@ -273,16 +319,18 @@
 
 
                 {% if user.is_authenticated %}
-                    <a href="{% url 'logout' %}" class="btn-logout">Logout</a>
+                  <a href="{% url 'logout' %}" class="danger">🚪 Logout</a>
                 {% else %}
-                    <a href="{% url 'login' %}" class="nav-link {% if request.resolver_match.url_name == 'login' %}active{% endif %}">Login</a>
-                    <a href="{% url 'register' %}" class="btn-primary-nav">Sign Up</a>
+                  <a href="{% url 'login' %}">Login</a>
+                  <a href="{% url 'register' %}">Sign up</a>
+
                 {% endif %}
-
-
+      
+              </div>
             </div>
-        </div>
-
+      
+          </div>
+        </div>  
 
 
     </nav>
@@ -386,7 +434,22 @@
         </script>
 
 
-
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const btn = document.getElementById("menuBtn");
+      const menu = document.getElementById("menuDropdown");
+    
+      btn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        menu.style.display = menu.style.display === "block" ? "none" : "block";
+      });
+    
+      document.addEventListener("click", () => {
+        menu.style.display = "none";
+      });
+    });
+    </script>
+    
 
     
         

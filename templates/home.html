@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load static text_extras %}
+{% load static %}
 
 {% block title %}Home | MicroBlogHub{% endblock %}
 
@@ -35,8 +35,30 @@
 
     <form method="POST" action="{% url 'create_post' %}" class="composer-main">
       {% csrf_token %}
-      <textarea name="content" rows="3"
-        placeholder="What's happening?" required></textarea>
+    <div class="textarea-wrapper">
+      <textarea id="postText"
+          name="content"
+          rows="3"
+          placeholder="What's happening?"
+          required
+          spellcheck="true"
+          autocorrect="on"
+          autocomplete="on"
+          autocapitalize="sentences"></textarea>
+
+          <button
+          type="button"
+          id="mic-btn"
+          class="mic-btn"
+          title="Speak"
+          aria-label="Speech to text"
+        >
+          🎤
+        </button>
+    </div>
+        
+
+
       <div class="composer-footer">
         <div class="composer-actions">
             <button type="submit" name="action" value="publish" class="primary-btn">Post</button>
@@ -65,7 +87,8 @@
     <!-- ================= POSTS ================= -->
   <section class="posts-list">
     {% for post in posts %}
-    <article class="post">
+<article class="post" id="post-{{ post.id }}">
+
 
         <div class="avatar">
           {% with up=post.user.profile %}
@@ -76,7 +99,7 @@
             {% endif %}
           {% endwith %}
         </div>
-      </a>
+      
 
       <div class="post-main">
         <header class="post-header">
@@ -84,10 +107,10 @@
             @{{ post.user.username }}
           </a>
           <span class="post-dot">·</span>
-          <span class="post-time">{{ post.created_at }} ago</span>
+          <span class="post-time">{{ post.created_at|timesince }} ago</span>
         </header>
 
-          <p class="post-body">{{ post.content|urlize|linkify_hashtags|linebreaksbr }}</p>
+          <p class="post-body">{{ post.content|urlize|linebreaksbr }}</p>
           <footer class="post-footer">
             <div class="post-actions">
               <div class="like-section">
@@ -97,33 +120,36 @@
                       <span class="action-count">{{ post.like_count }}</span>
                     </span>
                   {% else %}
-                    {% if post.id in liked_posts %}
-                      <a href="{% url 'unlike' post.id %}" class="action-btn liked">
+                    {% if request.user.is_authenticated %}
+                      {% if post.id in liked_posts %}
+                      <a href="{% url 'unlike' post.id %}#post-{{ post.id }}" class="action-btn liked">
                         <span class="action-icon">❤️</span>
-                        <span class="action-count">{{ post.like_count }}</span>
-                      </a>
+                          <span class="action-count">{{ post.like_count }}</span>
+                        </a>
+                      {% else %}
+                        <a href="{% url 'like' post.id %}" class="action-btn">
+                          <span class="action-icon">🤍</span>
+                          <span class="action-count">{{ post.like_count }}</span>
+                        </a>
+                      {% endif %}
                     {% else %}
-                      <a href="{% url 'like' post.id %}" class="action-btn">
+                      <a href="{% url 'login' %}?next={{ request.path }}" class="action-btn" title="Log in to like">
                         <span class="action-icon">🤍</span>
                         <span class="action-count">{{ post.like_count }}</span>
                       </a>
                     {% endif %}
                   {% endif %}
-              </div>
-                <div class="bookmark-section">
-                  {% if request.user.is_authenticated %}
-                    <button class="action-btn bookmark-toggle {% if post.id in bookmarked_posts %}bookmarked{% endif %}" 
-                            data-post-id="{{ post.id }}"
-                            data-bookmarked="{% if post.id in bookmarked_posts %}1{% else %}0{% endif %}"
-                            data-toggle-url="{% url 'bookmark_toggle' post.id %}">
-                          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-  <path d="M6 3h12a1 1 0 0 1 1 1v17l-7-4-7 4V4a1 1 0 0 1 1-1z"/>
-</svg>
 
-                    </button>
-                  {% endif %}
-                </div>
+                  <button
+                  type="button"
+                  class="action-btn comment-btn"
+                  onclick="toggleComments('{{ post.id }}')"
+                >
+                  💬 <span>{{ post.comments.count }}</span>
+                </button>
+                
+
+              </div>
               {% if request.user.is_authenticated and request.user == post.user %}
                 <div class="post-owner-actions">
                   <a href="{% url 'edit_post' post.id %}" class="action-btn" title="Edit">✏️</a>
@@ -135,11 +161,14 @@
           </footer>
 
                <!-- Comments -->
-       <section class="comments-section">
-
-        {% for comment in post.comment_set.all %}
-          {% if not comment.parent %}
-          <div class="yt-comment">
+               <section
+               class="comments-wrapper"
+               id="comments-{{ post.id }}"
+             >
+             
+        {% for comment in post.comments.all %}
+        {% if True %}
+        <div class="yt-comment">
         
             <!-- Avatar -->
             
@@ -148,53 +177,83 @@
         
               <div class="yt-header">
                 <span class="yt-username">@{{ comment.user.username }}</span>
-                <span class="yt-time">{{ comment.created_at}} ago</span>
+                <span class="yt-time">{{ comment.created_at|timesince }} ago</span>
               </div>
         
-                <div class="yt-text" id="comment-text-{{ comment.id }}">
-                {{ comment.text|urlize|linkify_hashtags|linebreaksbr }}
+              <div class="yt-text" id="comment-text-{{ comment.id }}">
+                {{ comment.text }}
               </div>
         
               <!-- Actions -->
                <div class="yt-actions">
                 <button onclick="toggleReply('{{ comment.id }}')">Reply</button>
 
-                <a href="{% url 'toggle_comment_like' comment.id %}" class="comment-like-btn">
-                  {% if comment.id in liked_comments %}
-                      ❤️ {{ comment.likes.count }}
-                    {% else %}
-                    🤍 {{ comment.likes.count }}
-                    {% endif %}
-                </a>
+                {% if request.user.is_authenticated %}
+                  <a href="{% url 'toggle_comment_like' comment.id %}" class="comment-like-btn">
+                    {% if comment.id in liked_comments %} ❤️ {% else %} 🤍 {% endif %} {{ comment.likes.count }}
+                  </a>
+                {% else %}
+                  <a href="{% url 'login' %}?next={{ request.path }}" class="comment-like-btn" title="Log in to like">
+                    {% if comment.id in liked_comments %} ❤️ {% else %} 🤍 {% endif %} {{ comment.likes.count }}
+                  </a>
+                {% endif %}
 
-                  {% if user == comment.user %}
-                    <button onclick="toggleEdit('{{ comment.id }}')">Edit</button>
-                    <a href="{% url 'delete_comment' comment.id %}" class="danger">Delete</a>
-                  {% endif %}
+                {% if user == comment.user %}
+
+                <!-- Edit -->
+                <button type="button" onclick="toggleEdit('{{ comment.id }}')">
+                  Edit
+                </button>
+              
+                <!-- Delete -->
+                <form method="POST"
+                action="{% url 'delete_comment' comment.id %}#post-{{ post.id }}"
+                style="display:inline;">
+          
+                  {% csrf_token %}
+                  <button type="submit" class="danger">
+                    Delete
+                  </button>
+                </form>
+              
+              {% endif %}
+              
                  </div>
 
               <!-- Edit form -->
               {% if user == comment.user %}
               <form method="POST"
-                    action="{% url 'edit_comment' comment.id %}"
-                    id="edit-form-{{ comment.id }}"
-                    class="yt-edit-form"
-                    style="display:none;">
+      action="{% url 'edit_comment' comment.id %}#post-{{ post.id }}"
+      id="edit-form-{{ comment.id }}"
+      class="yt-edit-form"
+      style="display:none;">
+
                 {% csrf_token %}
-                <input type="text" name="text" value="{{ comment.text }}">
-                <button type="submit">Save</button>
+                <input type="text"
+                name="text"
+                value="{{ comment.text }}"
+                spellcheck="true"
+                autocorrect="on"
+                autocapitalize="sentences">
+                         <button type="submit">Save</button>
               </form>
               {% endif %}
         
               <!-- Reply form -->
               <form method="POST"
-                    action="{% url 'reply_comment' comment.id %}"
-                    id="reply-form-{{ comment.id }}"
-                    class="yt-reply-form"
-                    style="display:none;">
+      action="{% url 'reply_comment' comment.id %}#post-{{ post.id }}"
+      id="reply-form-{{ comment.id }}"
+      class="yt-reply-form"
+      style="display:none;">
+
                 {% csrf_token %}
-                <input type="text" name="text" placeholder="Add a reply…">
-                <button type="submit">Reply</button>
+                <input type="text"
+                name="text"
+                placeholder="Add a reply…"
+                spellcheck="true"
+                autocorrect="on"
+                autocapitalize="sentences">
+                         <button type="submit">Reply</button>
               </form>
         
               <!-- Replies toggle -->
@@ -219,9 +278,9 @@
                     {{ reply.user.username|first|upper }}
                   </div>
         
-                    <div class="yt-body">
+                  <div class="yt-body">
                     <span class="yt-username">@{{ reply.user.username }}</span>
-                    <p>{{ reply.text|urlize|linkify_hashtags|linebreaksbr }}</p>
+                    <p>{{ reply.text }}</p>
                   </div>
         
                 </div>
@@ -234,13 +293,29 @@
         {% endfor %}
         
         <!-- New Comment -->
-        <form method="POST" action="{% url 'add_comment' post.id %}" class="yt-new-comment">
-          {% csrf_token %}
-          <input type="text" name="comment" placeholder="Add a comment…" required>
-          <button type="submit">Send</button>
+        {% if request.user.is_authenticated %}
+        <form method="POST"
+        action="{% url 'add_comment' post.id %}#post-{{ post.id }}"
+        class="yt-new-comment">
+            {% csrf_token %}
+            <input type="text"
+            name="comment"
+            placeholder="Add a comment…"
+            required
+            spellcheck="true"
+            autocorrect="on"
+            autocapitalize="sentences">
+               <button type="submit">Send</button>
         </form>
+        {% else %}
+        <div class="yt-new-comment guest">
+          <a href="{% url 'login' %}?next={{ request.path }}">Log in</a> to comment.
+        </div>
+        {% endif %}
         
         </section>
+
+    
         
 
 
@@ -250,6 +325,8 @@
      <p>No posts yet.</p>
     {% endfor %}
   </section>
+
+
 
 </main>
 
@@ -280,6 +357,8 @@
     </div>
   </section>
 </aside>
+
+
 
 </div>
 
@@ -312,11 +391,133 @@
       }
   }
   </script>
+
+<script>
+  (function () {
+    const fixes = {
+      "im": "I'm",
+      "dont": "don't",
+      "cant": "can't",
+      "u": "you",
+      "ur": "your",
+      "pls": "please"
+    };
+  
+    function autoFix(input) {
+      let words = input.value.split(/\b/);
+      words = words.map(w => fixes[w.toLowerCase()] || w);
+      input.value = words.join("");
+    }
+  
+    document.addEventListener("blur", function (e) {
+      if (e.target.matches("textarea, input[type='text']")) {
+        autoFix(e.target);
+      }
+    }, true);
+  })();
+  </script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+  
+    const micBtn = document.getElementById("mic-btn");
+    const textarea = document.querySelector("textarea");
+  
+    if (!micBtn || !textarea) {
+      console.error("Mic button or textarea not found");
+      return;
+    }
+  
+    const SpeechRecognition =
+      window.SpeechRecognition || window.webkitSpeechRecognition;
+  
+    if (!SpeechRecognition) {
+      alert("Speech Recognition not supported in this browser");
+      return;
+    }
+  
+    const recognition = new SpeechRecognition();
+    recognition.lang = "en-US";
+    recognition.continuous = false;
+    recognition.interimResults = false;
+  
+    let isListening = false;
+  
+    recognition.onresult = (event) => {
+      const text = event.results[0][0].transcript;
+      textarea.value += (textarea.value ? " " : "") + text;
+    };
+  
+    recognition.onerror = (event) => {
+      alert("Mic error: " + event.error);
+    };
+  
+    recognition.onend = () => {
+      isListening = false;
+      micBtn.classList.remove("listening");
+    };
+  
+    micBtn.addEventListener("click", () => {
+      if (isListening) {
+        recognition.stop();
+        return;
+      }
+  
+      recognition.start();
+      isListening = true;
+      micBtn.classList.add("listening");
+    });
+  
+  });
+  </script>
+  
+
+<script>
+ function toggleComments(postId) {
+  const comments = document.getElementById(`comments-${postId}`);
+  if (!comments) return;
+
+  comments.classList.toggle("open");
+}
+
+</script>
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    // If page reloaded after comment submission
+    if (window.location.hash.startsWith("#post-")) {
+      const postId = window.location.hash.replace("#post-", "");
+      const comments = document.getElementById(`comments-${postId}`);
+      if (comments) {
+        comments.classList.add("open");
+      }
+    }
+  });
+  </script>
+
+  <style>
+    /* Make like + comment inline */
+.like-section {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+}
+
+/* Keep buttons consistent */
+.like-section .action-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+/* Optional: nicer hover */
+.like-section .action-btn:hover {
+  opacity: 0.85;
+}
+
+  </style>
   
 
 {% endblock %}
-
-<!-- bookmark JS moved to static/js/bookmark_toggle.js -->
 
 
 
