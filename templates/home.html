@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load static %}
+{% load static text_extras %}
 
 {% block title %}Home | MicroBlogHub{% endblock %}
 
@@ -87,7 +87,7 @@
           <span class="post-time">{{ post.created_at }} ago</span>
         </header>
 
-          <p class="post-body">{{ post.content|urlize|linebreaksbr }}</p>
+          <p class="post-body">{{ post.content|urlize|linkify_hashtags|linebreaksbr }}</p>
           <footer class="post-footer">
             <div class="post-actions">
               <div class="like-section">
@@ -97,26 +97,33 @@
                       <span class="action-count">{{ post.like_count }}</span>
                     </span>
                   {% else %}
-                    {% if request.user.is_authenticated %}
-                      {% if post.id in liked_posts %}
-                        <a href="{% url 'unlike' post.id %}" class="action-btn liked">
-                          <span class="action-icon">❤️</span>
-                          <span class="action-count">{{ post.like_count }}</span>
-                        </a>
-                      {% else %}
-                        <a href="{% url 'like' post.id %}" class="action-btn">
-                          <span class="action-icon">🤍</span>
-                          <span class="action-count">{{ post.like_count }}</span>
-                        </a>
-                      {% endif %}
+                    {% if post.id in liked_posts %}
+                      <a href="{% url 'unlike' post.id %}" class="action-btn liked">
+                        <span class="action-icon">❤️</span>
+                        <span class="action-count">{{ post.like_count }}</span>
+                      </a>
                     {% else %}
-                      <a href="{% url 'login' %}?next={{ request.path }}" class="action-btn" title="Log in to like">
+                      <a href="{% url 'like' post.id %}" class="action-btn">
                         <span class="action-icon">🤍</span>
                         <span class="action-count">{{ post.like_count }}</span>
                       </a>
                     {% endif %}
                   {% endif %}
               </div>
+                <div class="bookmark-section">
+                  {% if request.user.is_authenticated %}
+                    <button class="action-btn bookmark-toggle {% if post.id in bookmarked_posts %}bookmarked{% endif %}" 
+                            data-post-id="{{ post.id }}"
+                            data-bookmarked="{% if post.id in bookmarked_posts %}1{% else %}0{% endif %}"
+                            data-toggle-url="{% url 'bookmark_toggle' post.id %}">
+                          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M6 3h12a1 1 0 0 1 1 1v17l-7-4-7 4V4a1 1 0 0 1 1-1z"/>
+</svg>
+
+                    </button>
+                  {% endif %}
+                </div>
               {% if request.user.is_authenticated and request.user == post.user %}
                 <div class="post-owner-actions">
                   <a href="{% url 'edit_post' post.id %}" class="action-btn" title="Edit">✏️</a>
@@ -144,23 +151,21 @@
                 <span class="yt-time">{{ comment.created_at}} ago</span>
               </div>
         
-              <div class="yt-text" id="comment-text-{{ comment.id }}">
-                {{ comment.text }}
+                <div class="yt-text" id="comment-text-{{ comment.id }}">
+                {{ comment.text|urlize|linkify_hashtags|linebreaksbr }}
               </div>
         
               <!-- Actions -->
                <div class="yt-actions">
                 <button onclick="toggleReply('{{ comment.id }}')">Reply</button>
 
-                {% if request.user.is_authenticated %}
-                  <a href="{% url 'toggle_comment_like' comment.id %}" class="comment-like-btn">
-                    {% if comment.id in liked_comments %} ❤️ {% else %} 🤍 {% endif %} {{ comment.likes.count }}
-                  </a>
-                {% else %}
-                  <a href="{% url 'login' %}?next={{ request.path }}" class="comment-like-btn" title="Log in to like">
-                    {% if comment.id in liked_comments %} ❤️ {% else %} 🤍 {% endif %} {{ comment.likes.count }}
-                  </a>
-                {% endif %}
+                <a href="{% url 'toggle_comment_like' comment.id %}" class="comment-like-btn">
+                  {% if comment.id in liked_comments %}
+                      ❤️ {{ comment.likes.count }}
+                    {% else %}
+                    🤍 {{ comment.likes.count }}
+                    {% endif %}
+                </a>
 
                   {% if user == comment.user %}
                     <button onclick="toggleEdit('{{ comment.id }}')">Edit</button>
@@ -214,9 +219,9 @@
                     {{ reply.user.username|first|upper }}
                   </div>
         
-                  <div class="yt-body">
+                    <div class="yt-body">
                     <span class="yt-username">@{{ reply.user.username }}</span>
-                    <p>{{ reply.text }}</p>
+                    <p>{{ reply.text|urlize|linkify_hashtags|linebreaksbr }}</p>
                   </div>
         
                 </div>
@@ -229,17 +234,11 @@
         {% endfor %}
         
         <!-- New Comment -->
-        {% if request.user.is_authenticated %}
         <form method="POST" action="{% url 'add_comment' post.id %}" class="yt-new-comment">
           {% csrf_token %}
           <input type="text" name="comment" placeholder="Add a comment…" required>
           <button type="submit">Send</button>
         </form>
-        {% else %}
-        <div class="yt-new-comment guest">
-          <a href="{% url 'login' %}?next={{ request.path }}">Log in</a> to comment.
-        </div>
-        {% endif %}
         
         </section>
         
@@ -316,6 +315,8 @@
   
 
 {% endblock %}
+
+<!-- bookmark JS moved to static/js/bookmark_toggle.js -->
 
 
 

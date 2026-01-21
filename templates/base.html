@@ -16,6 +16,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="{% static 'js/vibetext.js' %}" defer></script>
     <script src="{% static 'js/notifications.js' %}"></script>
+    <script src="{% static 'js/bookmark_toggle.js' %}" defer></script>
     <script>
         // Apply saved theme early to avoid flash by setting class on <html>
         (function(){
@@ -245,7 +246,7 @@
 
                     <button id="notificationBell" class="notification-bell" type="button">
                         🔔
-                        {% if unread_notifications_count|default:0 > 0 %}
+                        {% if unread_notifications_count > 0 %}
                             <span class="notification-count">{{ unread_notifications_count }}</span>
                         {% endif %}
                     </button>
@@ -335,11 +336,7 @@
         <h3>Important Links</h3>
         <ul>
           <li><a href="{% url 'home' %}">Home</a></li>
-           {% if request.user.is_authenticated %}
-              <a href="{% url 'profile' request.user.username %}">
-                    Profile
-              </a>
-            {% endif %}
+          <li><a href="{% url 'profile' request.user.username %}">Profile</a></li>
           <li><a href="#">Communities</a></li>
           <li><a href="#">About</a></li>
         </ul>
