@@ -238,6 +238,54 @@ button:active {
 .trending-posts .tpost-snippet { color:#cbd5e1; font-size:0.95rem; margin:0; padding: 0.85rem; }
 /* Highlighted search matches */
 .mark-highlight { background: rgba(99,102,241,0.25); padding: 0.05rem 0.2rem; border-radius:4px; }
+/* Top Creators (sidebar) - truncate long usernames with ellipsis only in this section */
+.people-section .creator-row {
+    display: flex;
+    gap: 0.6rem;
+    align-items: center;
+    padding: 0.45rem 0.25rem;
+    border-radius: 8px;
+}
+.people-section .creator-row:hover { background: rgba(79,70,229,0.03); }
+.people-section .creator-avatar img { width:40px; height:40px; object-fit:cover; border-radius:50%; display:block; }
+.people-section .creator-meta { min-width: 0; flex: 1 1 auto; overflow: hidden; }
+.people-section .creator-top { display:flex; gap:0.5rem; align-items:center; justify-content:space-between; min-width:0; }
+.people-section .creator-username {
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+}
+.people-section .creator-badge { flex-shrink: 0; margin-left: 0.5rem; white-space: nowrap; }
+
+/* Follow button styling in Top Creators */
+.people-section .creator-row { display:flex; gap: 0.6rem; align-items:flex-start; }
+.people-section .creator-link { display:flex; gap:0.6rem; align-items:center; flex:1 1 auto; min-width:0; }
+.people-section .creator-avatar img { width:40px; height:40px; object-fit:cover; border-radius:50%; display:block; }
+.people-section .creator-meta { min-width:0; flex:1 1 auto; display:flex; flex-direction:column; }
+.people-section .creator-top { display:flex; gap:0.5rem; align-items:center; justify-content:space-between; }
+.people-section .creator-username { display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100%; }
+.people-section .creator-badge { flex-shrink:0; margin-left:0.5rem; white-space:nowrap; }
+.people-section .creator-bottom { color: var(--muted); font-size:0.85rem; margin-top:4px; }
+
+/* Compact follow button placed under the badge */
+.people-section .creator-actions { margin-top:6px; display:flex; justify-content:flex-start; }
+.people-section .follow-btn {
+    background: transparent;
+    border: 1px solid rgba(148,163,184,0.12);
+    color: var(--text);
+    padding: 0.25rem 0.5rem;
+    border-radius: 6px;
+    font-size: 0.78rem;
+    line-height:1;
+}
+.people-section .follow-btn.following {
+    background: linear-gradient(135deg, #4f46e5, #6366f1);
+    color: #fff;
+    border-color: transparent;
+}
+.people-section .creator-actions form { margin:0; }
 
 /* Search input styles for base nav (fallback in style.css in case vibetext overrides) */
 .nav-search-form { display:flex; align-items:center; gap:0.4rem; }
@@ -1664,3 +1712,4 @@ html.light-theme .brand h1,
 html.light-theme .brand span {
     color: #020617 !important;
 }
+

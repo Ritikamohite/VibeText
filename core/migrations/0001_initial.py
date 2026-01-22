@@ -47,15 +47,6 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.CreateModel(
-            name='Follow',
-            fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created_at', models.DateTimeField(default=django.utils.timezone.now)),
-                ('follower', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='following', to=settings.AUTH_USER_MODEL)),
-                ('following', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='followers', to=settings.AUTH_USER_MODEL)),
-            ],
-        ),
-        migrations.CreateModel(
             name='Message',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
@@ -66,7 +57,7 @@ class Migration(migrations.Migration):
                 ('sender', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='sent_messages', to=settings.AUTH_USER_MODEL)),
             ],
             options={
-                'ordering': ['-created_at'],
+                'ordering': ['timestamp'],
             },
         ),
         migrations.CreateModel(
@@ -89,15 +80,6 @@ class Migration(migrations.Migration):
                 ('recipient', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='received_notifications', to=settings.AUTH_USER_MODEL)),
                 ('sender', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='sent_notifications', to=settings.AUTH_USER_MODEL)),
                 ('post', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='core.post')),
-            ],
-        ),
-        migrations.CreateModel(
-            name='Like',
-            fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created_at', models.DateTimeField(default=django.utils.timezone.now)),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
-                ('post', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='likes', to='core.post')),
             ],
         ),
         migrations.CreateModel(
@@ -161,13 +143,29 @@ class Migration(migrations.Migration):
                 'unique_together': {('user', 'post')},
             },
         ),
-        migrations.AddConstraint(
-            model_name='follow',
-            constraint=models.UniqueConstraint(fields=('follower', 'following'), name='unique_follow'),
+        migrations.CreateModel(
+            name='Follow',
+            fields=[
+                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('created_at', models.DateTimeField(default=django.utils.timezone.now)),
+                ('follower', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='following', to=settings.AUTH_USER_MODEL)),
+                ('following', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='followers', to=settings.AUTH_USER_MODEL)),
+            ],
+            options={
+                'constraints': [models.UniqueConstraint(fields=('follower', 'following'), name='unique_follow')],
+            },
         ),
-        migrations.AlterUniqueTogether(
-            name='like',
-            unique_together={('user', 'post')},
+        migrations.CreateModel(
+            name='Like',
+            fields=[
+                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('created_at', models.DateTimeField(default=django.utils.timezone.now)),
+                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                ('post', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='likes', to='core.post')),
+            ],
+            options={
+                'unique_together': {('user', 'post')},
+            },
         ),
         migrations.AlterUniqueTogether(
             name='bookmark',

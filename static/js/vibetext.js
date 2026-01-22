@@ -124,7 +124,7 @@
             setTimeout(() => toast.remove(), 300);
         }, duration);
     }
-
+/*
     // ============================================
     // Character Counter Module (Disabled - No Limit)
     // ============================================
@@ -318,6 +318,7 @@
             }
         }
     };
+*/
 
     // Initialize show more buttons
     function initShowMoreButtons() {
@@ -714,7 +715,7 @@
         // Initialize all modules
         try {
             CharacterCounter.init();
-            CommentsModule.init();
+           // CommentsModule.init();//
             FormEnhancements.init();
             InteractiveElements.init();
             NavigationModule.init();

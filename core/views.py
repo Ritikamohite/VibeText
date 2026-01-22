@@ -515,6 +515,7 @@ def follow_user(request, user_id):
     return redirect('profile', username=target.username)
 
 
+
 @login_required
 def unfollow_user(request, user_id):
     # Only allow POST for unfollow action
@@ -568,6 +569,11 @@ def like_post(request, post_id):
             notification_type='like',
             post=post
         )
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        return JsonResponse({
+            "liked": bool(created),
+            "count": post.likes.count()
+        })
     # Prefer returning to referring page, fallback to home
     return redirect(request.META.get('HTTP_REFERER', 'home'))
 
@@ -678,7 +684,7 @@ def add_comment(request, post_id):
         text = request.POST.get('comment')
 
         if text and text.strip():
-            Comment.objects.create(
+            comment = Comment.objects.create(
                 user=request.user,
                 post=post,
                 text=text
@@ -691,6 +697,16 @@ def add_comment(request, post_id):
                     notification_type='comment',
                     post=post
                 )
+
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        # Return created comment info for AJAX insertion
+        try:
+            return JsonResponse({
+                "user": comment.user.username,
+                "text": comment.text
+            })
+        except Exception:
+            return JsonResponse({"error": "Could not create comment"}, status=500)
 
     # Redirect back to the page that submitted the comment (profile, post detail, home, etc.)
     return redirect('home')
@@ -805,6 +821,9 @@ def mark_notifications_read(request):
         is_read=False
     ).update(is_read=True)
 
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        return JsonResponse({"status": "read"})
+
     return JsonResponse({"status": "ok"})
 
 # =========================
@@ -831,6 +850,7 @@ def messages_list(request):
             sender=user,
             recipient=request.user,
             is_read=False
+
         ).count()
 
         conversations.append({
@@ -838,11 +858,6 @@ def messages_list(request):
             'last_message': last_message,
             'unread_count': unread_count
         })
-
-    conversations.sort(
-        key=lambda x: x['last_message'].created_at if x['last_message'] else x['user'].date_joined,
-        reverse=True
-    )
 
     return render(request, 'core/messages.html', {
         'conversations': conversations
@@ -979,6 +994,11 @@ def delete_post(request, post_id):
 def edit_profile(request):
     profile, _ = Profile.objects.get_or_create(user=request.user)
 
+    # Initialize forms with current instances so they're always defined
+    user_form = EditUserForm(instance=request.user)
+    profile_form = ProfilePhotoForm(instance=profile)
+    password_form = PasswordChangeForm(user=request.user)
+
     if request.method == 'POST':
         if 'save_profile' in request.POST:
             user_form = EditUserForm(request.POST, instance=request.user)
@@ -1000,11 +1020,11 @@ def edit_profile(request):
                 update_session_auth_hash(request, user)
                 messages.success(request, 'Password changed successfully!')
                 return redirect('profile', request.user.username)
+ 
 
-    else:
-        user_form = EditUserForm(instance=request.user)
-        profile_form = ProfilePhotoForm(instance=profile)
-        password_form = PasswordChangeForm(user=request.user)
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        return JsonResponse({"saved": True})
+
 
     return render(request, 'core/edit_profile.html', {
         'user_form': user_form,
@@ -1451,5 +1471,6 @@ def toggle_community_like(request, post_id):
         like.delete()
 
     return redirect('community_detail', community_id=post.community.id)
+
 
 

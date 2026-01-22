@@ -1,0 +1,52 @@
+/* static/css/home.css
+   Composer, mic, comments, and scrollbar tweaks.
+*/
+.textarea-wrapper {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+.textarea-wrapper textarea {
+  flex: 1 1 auto;
+  min-height: 56px;
+  resize: vertical;
+  padding: 0.6rem 0.75rem;
+  border-radius: 8px;
+}
+
+.mic-btn {
+  flex: 0 0 40px;
+  width: 40px;
+  height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background: transparent;
+  border: 1px solid rgba(148,163,184,0.08);
+  cursor: pointer;
+}
+
+.mic-btn.listening { background: rgba(79,70,229,0.08); }
+
+/* Comments panel hidden by default, opened with .open */
+.comments-wrapper { display: none; margin-top: 0.5rem; }
+.comments-wrapper.open { display: block; }
+
+/* Hide scrollbars visually but keep scrolling active */
+/* Webkit browsers */
+*::-webkit-scrollbar { width: 0; height: 0; }
+/* Firefox */
+* { scrollbar-width: none; }
+/* IE/Edge */
+* { -ms-overflow-style: none; }
+
+/* Keep like/comment inline styling (moved here) */
+.like-section { display:flex; align-items:center; gap:1.2rem; }
+.like-section .action-btn { display:flex; align-items:center; gap:0.35rem; }
+
+@media (max-width: 640px) {
+  .textarea-wrapper textarea { min-height: 44px; }
+  .mic-btn { width:36px; height:36px; }
+}

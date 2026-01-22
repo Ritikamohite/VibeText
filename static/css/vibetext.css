@@ -16,6 +16,7 @@
   --text: #e5e7eb;
   --text-soft: #9ca3af;
   --border: rgba(148, 163, 184, 0.35);
+  --on-accent: #ffffff;
   --radius: 16px;
 }
 
@@ -29,6 +30,7 @@ html.light-theme, body.light-theme {
   --text: #0f172a;
   --text-soft: #6b7280;
   --border: rgba(2, 6, 23, 0.06);
+  --on-accent: #ffffff;
 }
 
 /* BASE */
@@ -121,7 +123,7 @@ a:hover {
 
 .current-user-card a:hover {
   background: var(--accent);
-  color: white;
+  color: var(--on-accent);
   text-decoration: none;
   transform: translateY(-1px);
 }
@@ -145,6 +147,7 @@ a:hover {
   align-items: center;
   justify-content: center;
   font-weight: 600;
+  color: var(--on-accent);
 }
 
 /* BIG PROFILE CARD AVATAR (LEFT SIDEBAR) */
@@ -154,7 +157,7 @@ a:hover {
   height: 90px;
 
   background: linear-gradient(135deg, #4f46e5, #22c55e);
-  color: white;
+  color: var(--on-accent);
 
   display: flex;
   align-items: center;
@@ -248,7 +251,7 @@ a:hover {
 
 .follow-chip:hover {
   background: var(--accent);
-  color: white;
+  color: var(--on-accent);
   border-color: var(--accent);
   transform: scale(1.05);
   text-decoration: none;
@@ -323,7 +326,7 @@ a:hover {
 /* BUTTONS */
 .primary-btn {
   background: linear-gradient(135deg, #4f46e5, #22c55e);
-  color: white;
+  color: var(--btn-text);
   border: none;
   border-radius: 999px;
   padding: 0.5rem 1.25rem;
@@ -421,6 +424,27 @@ a:hover {
   display: flex;
   gap: 1.5rem;
   align-items: center;
+}
+
+.bookmark-toggle {
+  color: var(--text-soft);
+}
+.bookmark-toggle svg {
+  transition: color 160ms ease, fill 160ms ease, stroke 160ms ease;
+}
+.bookmark-toggle.bookmarked {
+  color: var(--on-accent) !important; /* sets currentColor for the svg stroke/fill */
+}
+/* Make sure both the svg and the path use the accent color and override presentation attributes */
+.bookmark-toggle.bookmarked svg,
+.bookmark-toggle.bookmarked svg path {
+  color: var(--on-accent) !important;
+  fill: var(--on-accent) !important;
+  stroke: var(--on-accent) !important;
+}
+svg {
+  stroke: #fbfbfb;        /* default outline color */
+  fill: none;          /* outline only */
 }
 
 .action-btn {
@@ -582,7 +606,7 @@ a:hover {
   top: -6px;
   right: -6px;
   background: linear-gradient(135deg, #4f46e5, #22c55e);
-  color: white;
+  color: var(--on-accent);
   font-size: 0.65rem;
   font-weight: 700;
   padding: 2px 6px;
@@ -617,7 +641,7 @@ a:hover {
   height: 28px;
   padding: 0 8px;
   background: linear-gradient(135deg, #4f46e5, #22c55e);
-  color: white;
+  color: var(--on-accent);
   border-radius: 14px;
   font-size: 0.85rem;
   font-weight: 700;
@@ -689,7 +713,7 @@ a:hover {
   border-radius: 12px;
   border: none;
   background: linear-gradient(135deg, #4f46e5, #22c55e);
-  color: white;
+  color: var(--btn-text);
   font-weight: 600;
   font-size: 0.9rem;
   cursor: pointer;
