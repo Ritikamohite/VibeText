@@ -1,0 +1,400 @@
+/* General container for profile pages */
+/* ============================
+   PROFILE PAGE WRAPPER
+============================ */
+.profile-page {
+    max-width: 900px;
+    margin: 30px auto;
+    padding: 25px;
+    background: rgba(11, 16, 32, 0.95);
+    border-radius: 18px;
+    box-shadow: 0 10px 30px rgba(79, 70, 229, 0.5);
+    font-family: 'Arial', sans-serif;
+    color:var(--text);
+}
+.empty-text {
+    color: #94a3b8;
+    font-size: 15px;
+    margin-top: 15px;
+}
+
+
+/* ============================
+   PROFILE HEADER
+============================ */
+.profile-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.profile-header img {
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #4f46e5;
+    margin-bottom: 12px;
+}
+
+.profile-header h2 {
+    color: var(--text);
+    margin: 5px 0;
+}
+
+.profile-header p {
+    color: var(--muted);
+    font-size: 14px;
+}
+
+/* ============================
+   PROFILE STATS
+============================ */
+.profile-stats {
+    display: flex;
+    justify-content: center;
+    gap: 25px;
+    margin: 30px 0;
+}
+
+.stat-card {
+    min-width: 160px;
+    padding: 18px 22px;
+    text-align: center;
+    background: rgba(11, 16, 32, 0.95);
+    border-radius: 18px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+    backdrop-filter: blur(14px);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 18px 55px rgba(79, 70, 229, 0.45);
+}
+
+/* Count number */
+.stat-card .count {
+    display: block;
+    font-size: 30px;
+    font-weight: 700;
+    color: #8b5cf6;
+    margin-bottom: 6px;
+}
+
+/* Label text */
+.stat-card .label {
+    font-size: 14px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #c7d2fe;
+}
+
+/* ============================
+   PROFILE ACTION BUTTONS
+============================ */
+.profile-actions {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 35px;
+}
+
+.profile-actions a,
+.profile-actions button {
+    padding: 10px 20px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    color: var(--btn-text);
+    background: linear-gradient(135deg, #4f46e5, #22c55e);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.profile-actions a:hover,
+.profile-actions button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 10px 30px rgba(79, 70, 229, 0.5);
+}
+
+/* Delete button */
+.delete-btn {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+}
+
+/* ============================
+   POSTS SECTION
+============================ */
+.profile-page h3 {
+    font-size: 1.6rem;
+    margin-bottom: 15px;
+    color: var(--text);
+    border-bottom: 2px solid rgba(99, 102, 241, 0.4);
+    padding-bottom: 6px;
+}
+
+.post-content {
+    background: rgba(11, 16, 32, 0.95);
+    padding: 18px;
+    border-radius: 14px;
+    box-shadow: 0 10px 30px rgba(79, 70, 229, 0.5);
+    margin-bottom: 20px;
+    transition: transform 0.2s ease;
+}
+
+.post-content:hover {
+    transform: translateY(-4px);
+}
+
+.post-content p {
+    color: var(--text);
+    font-size: 15px;
+}
+
+/* ============================
+   POST FOOTER (likes, comments)
+============================ */
+.post-footer {
+    display: flex;
+    gap: 20px;
+    margin-top: 10px;
+    color: var(--muted);
+    font-size: 14px;
+}
+
+/* ============================
+   FOLLOWERS / FOLLOWING LIST
+============================ */
+.profile-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.profile-list li {
+    display: flex;
+    align-items: center;
+    background: rgba(11, 16, 32, 0.9);
+    padding: 14px;
+    margin-bottom: 12px;
+    border-radius: 14px;
+    border: 1px solid rgba(148,163,184,0.04);
+    box-shadow: 0 10px 28px rgba(3,6,23,0.6), 0 2px 6px rgba(79,70,229,0.03);
+    transition: transform 0.22s ease, box-shadow 0.22s ease;
+}
+
+.profile-list li:hover {
+    transform: translateY(-3px);
+}
+
+.profile-list img {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 14px;
+}
+
+/* Explicit view button in follower/following lists */
+.profile-list a.view-btn {
+    display: inline-block;
+    padding: 8px 12px;
+    background: linear-gradient(135deg, #4f46e5, #22c55e);
+    color: var(--on-accent);
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 600;
+    box-shadow: 0 8px 20px rgba(79, 70, 229, 0.35);
+}
+
+/* If template doesn't add view-btn class, style the anchor in list items */
+.profile-list li > a {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: linear-gradient(135deg, #4f46e5, #22c55e);
+    color: var(--on-accent);
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 600;
+    box-shadow: 0 8px 20px rgba(79, 70, 229, 0.25);
+}
+
+/* Ensure profile info takes remaining space */
+.profile-list .profile-info {
+    flex: 1 1 auto;
+    margin-right: 12px;
+}
+
+/* Back button variant used in followers/following templates */
+.back-home-btn, .back-profile-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 16px;
+  color: #818cf8;
+  text-decoration: none;
+  font-weight: 600;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: transparent;
+}
+
+.profile-list .follower-card {
+    /* ensure explicit follower card appearance */
+    background: rgba(11, 16, 32, 0.95);
+    border: 1px solid rgba(255,255,255,0.02);
+}
+
+.profile-info {
+    color: var(--text);
+    font-weight: bold;
+}
+
+/* Username (make visually similar to h1) and bio (h5-sized) */
+.profile-list .profile-info strong {
+    display: block;
+    line-height: 1.05;
+    font-weight: 600; /* match global heading weight */
+    color: var(--text);
+}
+
+.profile-list .profile-info p {
+    margin: 4px 0 0;
+    font-size: 0.85rem;
+    color: var(--muted);
+    font-weight: 400;
+}
+.back-profile-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 12px;
+  color: #818cf8;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+
+/* ============================
+   RESPONSIVE
+============================ */
+@media (max-width: 768px) {
+    .profile-stats {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .stat-card {
+        width: 90%;
+    }
+}
+
+/* ===== FIX: ensure posts on Home render neatly ===== */
+/* These rules are intentionally scoped to posts list layout
+   to avoid unintended changes elsewhere. They reinforce the
+   app's post card layout when multiple CSS files conflict. */
+.posts-list {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0.75rem !important;
+}
+
+.posts-list .post {
+    display: flex !important;
+    gap: 0.75rem !important;
+    padding: 1rem !important;
+    border-radius: 12px !important;
+    background: rgba(11,16,32,0.9) !important;
+    border: 1px solid rgba(148,163,184,0.04) !important;
+    align-items: flex-start !important;
+}
+
+
+.post .avatar {
+    width: 44px !important;
+    height: 44px !important;
+    flex: 0 0 44px !important;
+}
+
+.post-main { flex: 1 1 auto !important; }
+
+.post-body {
+    margin: 6px 0 !important;
+    color: #e5e7eb !important;
+    word-break: break-word !important;
+}
+
+.post-footer { margin-top: 0.5rem !important; }
+
+/* small screens: stack avatar above content for narrow layouts */
+@media (max-width: 600px) {
+    .posts-list .post {
+        flex-direction: column !important;
+        gap: 0.5rem !important;
+    }
+
+    .post .avatar { width: 48px; height: 48px; }
+}
+/* follower card tweaks */
+.follower-card {
+  padding: 14px 18px;
+}
+
+.follower-card .post-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.follower-card .action-btn {
+  padding: 6px 14px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #4facfe, #00f2fe);
+  color: #000;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+/* Post card wrapper so user_posts layout matches other pages */
+
+.post-card {
+    margin-bottom: 14px;
+    display: block;
+    border-radius: 12px;
+    border: 1px solid rgba(148,163,184,0.04);
+    box-shadow: 0 12px 36px rgba(3,6,23,0.62), 0 2px 8px rgba(79,70,229,0.04);
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+    overflow: hidden;
+}
+
+/* Make post-content fill card and have consistent padding/shadow */
+.post-card .post-content {
+    padding: 18px 20px;
+    border-radius: 12px;
+    background: linear-gradient(180deg, rgba(11,16,32,0.92), rgba(7,10,20,0.92));
+    transition: transform 0.16s ease;
+}
+
+.post-card .post-content:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 18px 46px rgba(3,6,23,0.6);
+}
+
+.post-card .post-content p {
+    margin: 0;
+    color: #e5e7eb;
+    word-break: break-word;
+}
+
+/* Tidy footer spacing and color */
+.post-card .post-footer {
+    padding: 8px 12px;
+    color: #94a3b8;
+    font-size: 13px;
+    text-align: right;
+}
+
+
+
