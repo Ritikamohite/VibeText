@@ -1180,12 +1180,16 @@ def delete_draft(request, post_id):
 
 @login_required
 def delete_account(request):
-    if request.method == "POST":
-        user = request.user
-        logout(request)
-        user.delete()
-        return redirect('login') 
+    user = request.user
 
+    with transaction.atomic():
+        # Explicitly delete profile first
+        if hasattr(user, 'profile'):
+            user.profile.delete()
+
+        user.delete()
+
+    return redirect('home')
 
 @login_required
 def list_profile_files(request):
